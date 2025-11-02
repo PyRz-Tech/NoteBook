@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ entry.sentiment }} Vibe - {{ entry.date|date:"Y/m/d" }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: url('https://www.transparenttextures.com/patterns/asfalt-dark.png'), linear-gradient(135deg, #0a0a0a 0%, #1c2526 100%);
+            background-attachment: fixed;
+            background-size: cover, 200% 200%;
+            color: #fff;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(45deg, rgba(79, 195, 247, 0.3), rgba(255, 64, 129, 0.3), rgba(206, 147, 216, 0.3));
+            opacity: 0.5;
+            z-index: -1;
+            animation: neonFade 30s linear infinite;
+        }
+        @keyframes neonFade {
+            0% { background-position: 0 0; }
+            100% { background-position: 2000px 2000px; }
+        }
+
+
+        .note-container {
+            max-width: 700px;
+            width: 90%;
+            background: rgba(10, 10, 10, 0.2);
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7), 0 0 30px rgba(79, 195, 247, 0.5);
+            border: 1.5px solid rgba(255, 64, 129, 0.5);
+            backdrop-filter: blur(15px);
+            position: relative;
+            animation: floatIn 0.8s ease-out;
+        }
+        @keyframes floatIn {
+            0% { transform: translateY(50px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        .note-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed rgba(206, 147, 216, 0.4);
+        }
+        .note-date {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #4fc3f7;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        }
+        .note-sentiment {
+            font-weight: bold;
+            font-size: 1.1rem;
+            padding: 8px 16px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .sentiment-positive { color: #4fc3f7; border-left: 4px solid #4fc3f7; }
+        .sentiment-negative { color: #ff4081; border-left: 4px solid #ff4081; }
+        .sentiment-neutral  { color: #ce93d8; border-left: 4px solid #ce93d8; }
+
+        .note-text {
+            font-size: 1.1rem;
+            line-height: 1.9;
+            color: #e0e0e0;
+            white-space: pre-wrap;
+            word-break: break-word;
+            background: rgba(10, 10, 10, 0.2);
+            padding: 20px;
+            border-radius: 14px;
+            border: 1px solid rgba(79, 195, 247, 0.3);
+            margin: 20px 0;
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .back-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: linear-gradient(45deg, #ff4081, #4fc3f7);
+            color: white;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(255, 64, 129, 0.4);
+        }
+        .back-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 10px 25px rgba(79, 195, 247, 0.6);
+        }
+
+        .score-badge {
+            font-size: 0.9rem;
+            color: #aaa;
+        }
+
+        .neon-glow {
+            animation: neonGlow 3s infinite;
+        }
+        @keyframes neonGlow {
+            0%, 100% { box-shadow: 0 0 10px rgba(79, 195, 247, 0.6), 0 0 20px rgba(255, 64, 129, 0.4); }
+            50% { box-shadow: 0 0 25px rgba(79, 195, 247, 0.9), 0 0 35px rgba(255, 64, 129, 0.7); }
+        }
+
+
+        @media (max-width: 576px) {
+            .note-container {
+                width: 92%;
+                padding: 32px;
+            }
+            .note-header {
+                flex-direction: column;
+                align-items: flex-end;
+                gap: 10px;
+            }
+            .note-date { font-size: 1.25rem; }
+            .note-sentiment {
+                font-size: 1.05rem;
+                padding: 7px 14px;
+                width: 100%;
+                justify-content: center;
+            }
+            .note-text {
+                font-size: 1.05rem;
+                padding: 18px;
+            }
+            .back-btn {
+                padding: 9px 18px;
+                font-size: 0.95rem;
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div style="width:100%;height:100vh;display:flex;justify-content:center;align-items:center;">
+        <div class="note-container neon-glow">
+            <div class="note-header">
+                <div class="note-date">
+                    {{ entry.date|date:"Y/m/d" }}
+                </div>
+                <div class="note-sentiment {% if entry.sentiment_score > 0 %}sentiment-positive{% elif entry.sentiment_score < 0 %}sentiment-negative{% else %}sentiment-neutral{% endif %}">
+                    ({{ entry.sentiment }})
+                    {% if entry.sentiment_score %}
+                        <span class="score-badge">Score: {{ entry.sentiment_score|floatformat:2 }}</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="note-text">
+                {{ entry.text|linebreaks }}
+            </div>
+
+            <a href="{% url 'core:notes' %}" class="back-btn">
+                Back to Latest View
+            </a>
+        </div>
+    </div>
+</body>
+</html>

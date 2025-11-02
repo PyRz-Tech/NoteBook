@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Vibe Notebook</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        * { box-sizing: border-box; }
+        html, body { height: 100%; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            background: url('https://www.transparenttextures.com/patterns/asfalt-dark.png'), linear-gradient(135deg, #0a0a0a 0%, #1c2526 100%);
+            background-attachment: fixed;
+            background-size: cover, 200% 200%;
+            color: #fff;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(45deg, rgba(79, 195, 247, 0.3), rgba(255, 64, 129, 0.3), rgba(206, 147, 216, 0.3));
+            opacity: 0.5;
+            z-index: -1;
+            animation: neonFade 30s linear infinite;
+        }
+        @keyframes neonFade { 0% { background-position: 0 0; } 100% { background-position: 2000px 2000px; } }
+
+        .dashboard-container { 
+            width: 100%; max-width: 900px; 
+            background: rgba(10,10,10,0.2); border-radius: 20px; 
+            padding: 30px 25px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.7), 0 0 20px rgba(79,195,247,0.4); 
+            border: 1px solid rgba(255,64,129,0.4); 
+            backdrop-filter: blur(12px); 
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        .chart-container { 
+            background: rgba(10,10,10,0.15); border-radius: 15px; 
+            padding: 20px; margin-bottom: 28px; 
+            box-shadow: 0 5px 15px rgba(0,0,0,0.6), 0 0 15px rgba(255,64,129,0.4); 
+            border: 1px solid rgba(79,195,247,0.4); 
+            backdrop-filter: blur(10px); 
+            position: relative; 
+            width: 100%; 
+            max-width: 600px;
+            min-height: 300px;
+            overflow-x: auto;
+            animation: neonGlow 3s infinite;
+        }
+
+        .action-btn {
+            display: flex !important; align-items: center !important; justify-content: center !important;
+            gap: 10px !important; margin: 16px auto 0 !important;
+            background: linear-gradient(45deg, #ff4081, #4fc3f7) !important;
+            color: #fff !important; border: none !important; border-radius: 10px !important;
+            padding: 13px 28px !important; font-size: 17px !important; font-weight: 600 !important;
+            text-decoration: none !important; text-align: center !important;
+            width: 100% !important; max-width: 380px !important;
+            transition: all 0.3s ease !important; position: relative; overflow: hidden; z-index: 1;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4), 0 0 15px rgba(79, 195, 247, 0.5) !important;
+            animation: neonGlow 3s infinite !important;
+        }
+
+        .action-btn::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, rgba(79, 195, 247, 0.4), rgba(255, 64, 129, 0.4), rgba(206, 147, 216, 0.4), rgba(79, 195, 247, 0.4));
+            background-size: 300% 300%; opacity: 0.6; z-index: -1;
+            animation: neonFlow 4s ease infinite; transition: opacity 0.3s ease;
+        }
+
+        .action-btn:hover { transform: translateY(-3px) scale(1.05) !important; box-shadow: 0 12px 30px rgba(79, 195, 247, 0.6), 0 0 25px rgba(255, 64, 129, 0.5) !important; }
+        .action-btn:hover::before { opacity: 0.9; animation-duration: 2s; }
+
+        .action-btn i {
+            order: 2; font-size: 1.35rem !important;
+            background: linear-gradient(45deg, #4fc3f7, #ff4081, #ce93d8) !important;
+            -webkit-background-clip: text !important; -webkit-text-fill-color: transparent !important;
+            background-clip: text !important;
+            filter: drop-shadow(0 0 10px rgba(79, 195, 247, 0.9)) drop-shadow(0 0 5px rgba(255, 64, 129, 0.8)) !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .action-btn span { order: 1; }
+        .action-btn:hover i { transform: translateX(5px) scale(1.12) !important; filter: drop-shadow(0 0 14px rgba(255, 64, 129, 1)) drop-shadow(0 0 7px rgba(79, 195, 247, 1)) !important; }
+
+        /* === دکمه ? (ریسپانسیو) === */
+        .help-btn { 
+            position: absolute; 
+            top: clamp(6px, 2vw, 12px); 
+            left: clamp(6px, 2vw, 12px); 
+            z-index: 100; 
+            width: clamp(28px, 7vw, 38px); 
+            height: clamp(28px, 7vw, 38px); 
+            border-radius: 50%; 
+            background: linear-gradient(45deg, #4fc3f7, #ff4081); 
+            color: #fff; 
+            font-size: clamp(12px, 3.5vw, 17px); 
+            font-weight: bold;
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.4), 0 0 12px rgba(255,64,129,0.6); 
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255,64,129,0.3);
+        }
+        .help-btn:hover { 
+            transform: scale(1.2); 
+            box-shadow: 0 6px 20px rgba(0,0,0,0.5), 0 0 18px rgba(255,64,129,0.9); 
+        }
+
+        h2 { 
+            color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.5), 0 0 10px rgba(79,195,247,0.6); 
+            font-weight: 700; font-size: 2rem; text-align: center; margin-bottom: 1.5rem; width: 100%;
+        }
+
+        /* === مودال (بدون رفرش) === */
+        #customModal { 
+            display: none !important; 
+            position: fixed; top: 0; left: 0; 
+            width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.75); 
+            backdrop-filter: blur(12px); 
+            z-index: 9999; 
+            justify-content: center; 
+            align-items: center; 
+            padding: 15px; 
+        }
+        #customModal.show { display: flex !important; animation: fadeIn 0.3s ease-out; }
+
+        .modal-content-custom { 
+            background: rgba(10,10,10,0.2); 
+            border-radius: 18px; 
+            border: 1px solid rgba(206,147,216,0.5); 
+            width: 100%; 
+            max-width: 90%; 
+            color: #fff; 
+            backdrop-filter: blur(14px); 
+            box-shadow: 0 12px 35px rgba(0,0,0,0.7), 0 0 25px rgba(79,195,247,0.4); 
+            animation: slideIn 0.3s ease-out; 
+            overflow: hidden;
+        }
+
+        .modal-header-custom { 
+            padding: clamp(12px, 3vw, 18px) clamp(15px, 4vw, 24px); 
+            border-bottom: 1px solid rgba(255,64,129,0.3); 
+            display: flex; justify-content: space-between; align-items: center; 
+            background: linear-gradient(135deg, rgba(79,195,247,0.1), rgba(255,64,129,0.1));
+        }
+        .modal-title-custom { 
+            font-weight: 700; 
+            font-size: clamp(1.1rem, 3.5vw, 1.3rem); 
+            color: #fff; 
+            text-shadow: 0 0 8px rgba(79,195,247,0.6);
+        }
+        .close-btn-custom { 
+            background: none; border: none; color: #ff4081; 
+            font-size: clamp(1.3rem, 4vw, 1.6rem); 
+            cursor: pointer; opacity: 0.9; 
+            transition: all 0.3s ease;
+        }
+        .close-btn-custom:hover { opacity: 1; transform: rotate(90deg); }
+
+        .modal-body-custom { 
+            padding: clamp(14px, 3.5vw, 20px) clamp(15px, 4vw, 24px); 
+            color: #e0e0e0; 
+            font-size: clamp(0.9rem, 2.8vw, 1rem); 
+            line-height: 1.7; 
+        }
+
+        .modal-footer-custom { 
+            padding: clamp(10px, 2.5vw, 14px) clamp(15px, 4vw, 24px); 
+            text-align: right; 
+            background: rgba(10,10,10,0.1);
+        }
+        .btn-close-modal { 
+            background: linear-gradient(45deg, #ff4081, #4fc3f7); 
+            border: none; color: #fff; 
+            border-radius: 10px; 
+            padding: clamp(8px, 2.2vw, 12px) clamp(16px, 4vw, 22px); 
+            font-weight: 600; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+            font-size: clamp(0.9rem, 2.8vw, 1rem); 
+            box-shadow: 0 0 12px rgba(79,195,247,0.5);
+        }
+        .btn-close-modal:hover { 
+            transform: scale(1.05); 
+            box-shadow: 0 0 18px rgba(79,195,247,0.8); 
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { transform: translateY(-50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes neonFlow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+        @keyframes neonGlow { 0% { box-shadow: 0 0 5px rgba(79,195,247,0.6), 0 0 10px rgba(255,64,129,0.4); } 50% { box-shadow: 0 0 20px rgba(79,195,247,0.9), 0 0 15px rgba(255,64,129,0.7); } 100% { box-shadow: 0 0 5px rgba(79,195,247,0.6), 0 0 10px rgba(255,64,129,0.4); } }
+
+        @media (max-width: 576px) {
+            .dashboard-container { padding: 22px 16px; border-radius: 16px; }
+            h2 { font-size: 1.7rem; margin-bottom: 1.1rem; }
+            .chart-container { padding: 14px; margin-bottom: 20px; max-width: 100%; min-height: 260px; }
+            .action-btn { padding: 11px 22px !important; font-size: 15.5px !important; max-width: 100% !important; gap: 7px !important; margin: 13px auto 0 !important; }
+            .action-btn i { font-size: 1.25rem !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <h2>My Vibe Notebook</h2>
+
+        <div class="chart-container">
+            <button type="button" class="help-btn" onclick="openModal()">?</button>
+            <canvas id="sentimentChart"></canvas>
+        </div>
+
+        <a href="{% url 'core:notes' %}" class="action-btn"><span>Your Latest Vibes</span><i class="fa-solid fa-heart-pulse"></i></a>
+        <a href="{% url 'core:capture_vibe' %}" class="action-btn"><span>Capture New Vibe</span><i class="fa-solid fa-plus"></i></a>
+        <a href="{% url 'core:logout' %}" class="action-btn"><span>Log Out</span><i class="fa-solid fa-sign-out-alt"></i></a>
+    </div>
+
+    <!-- Modal -->
+    <div id="customModal">
+        <div class="modal-content-custom">
+            <div class="modal-header-custom">
+                <h5 class="modal-title-custom">About Your Vibe Notebook</h5>
+                <button class="close-btn-custom" onclick="closeModal()">x</button>
+            </div>
+            <div class="modal-body-custom">
+                This is your space to capture your vibes! 
+                The chart shows your mood over time with exact timestamps.
+                You can add multiple notes in one day!
+            </div>
+            <div class="modal-footer-custom">
+                <button class="btn-close-modal" onclick="closeModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- مودال بدون رفرش ---
+        function openModal() {
+            const modal = document.getElementById('customModal');
+            modal.style.display = 'flex';
+            requestAnimationFrame(() => modal.classList.add('show'));
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('customModal');
+            modal.classList.remove('show');
+            setTimeout(() => { modal.style.display = 'none'; }, 300);
+        }
+
+        // --- داده‌های واقعی از مدل Text (زمان + امتیاز) ---
+        const labels = {{ labels|safe }};  // لیست str: ['Oct 28, 14:30', ...]
+        const values = {{ values|safe }};  // لیست float: [94.12, -87.3, ...]
+        const lastValue = {{ last_value }};
+
+        // --- چارت با باکس و فونت خیلی کوچیک در موبایل ---
+        const ctx = document.getElementById('sentimentChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Mood Wave',
+                        data: values,
+                        borderColor: '#4fc3f7',
+                        backgroundColor: 'rgba(79, 195, 247, 0.15)',
+                        borderWidth: 3,
+                        pointRadius: 5,
+                        pointHoverRadius: 9,
+                        pointBackgroundColor: '#4fc3f7',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        tension: 0.4,
+                        fill: true
+                    },
+                    {
+                        label: 'Current',
+                        data: Array(values.length - 1).fill(null).concat([lastValue]),
+                        pointRadius: 12,
+                        pointBackgroundColor: '#ff4081',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 3,
+                        hoverRadius: 15
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                layout: { padding: { top: 30, bottom: 15, left: 10, right: 10 } },
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: {
+                        min: -100, max: 100,
+                        ticks: {
+                            stepSize: 50,
+                            color: '#e0e0e0',
+                            font: { family: 'Inter', size: 12, weight: '600' },
+                            padding: 8,
+                            callback: v => {
+                                const labels = { 100: 'Very Happy', 50: 'Happy', 0: 'Neutral', '-50': 'Sad', '-100': 'Very Sad' };
+                                return labels[v] || '';
+                            }
+                        },
+                        grid: { color: c => c.tick.value === 0 ? 'rgba(255,64,129,0.6)' : 'rgba(79,195,247,0.12)', lineWidth: c => c.tick.value === 0 ? 2.5 : 1 },
+                        title: { display: true, text: 'Mood Level', color: '#fff', font: { family: 'Inter', size: 14, weight: '700' } }
+                    },
+                    x: {
+                        ticks: {
+                            color: '#b0b0b0',
+                            font: { family: 'Inter', size: 10, weight: '500' },
+                            maxRotation: 45,
+                            minRotation: 45,
+                            autoSkip: false,
+                            maxTicksLimit: 20
+                        },
+                        grid: { display: false }
+                    }
+                },
+                animation: { duration: 2400, easing: 'easeOutQuart' }
+            },
+            plugins: [{
+                id: 'moodLabel',
+                afterDraw: function(chart) {
+                    const ctx = chart.ctx;
+                    const lastIdx = chart.data.labels.length - 1;
+                    const lastVal = chart.data.datasets[1].data[lastIdx];
+                    if (lastVal === null) return;
+
+                    const x = chart.scales.x.getPixelForValue(lastIdx);
+                    const y = chart.scales.y.getPixelForValue(lastVal);
+
+                    // --- خیلی کوچیک در موبایل + همیشه داخل باکس ---
+                    const base = Math.min(chart.width, chart.height) / 32;
+                    const isMobile = chart.width <= 576;
+                    const scale = isMobile ? 0.35 : 1;  // 65% کوچیک‌تر در موبایل
+
+                    const fontSize = clamp(0.55, base * 1.2 * scale, 0.85);
+                    const boxWidth = clamp(38, base * 4.2 * scale, 58);
+                    const boxHeight = clamp(20, base * 2.4 * scale, 30);
+                    const radius = boxHeight / 2;
+
+                    const gradient = ctx.createRadialGradient(x, y, 0, x, y, boxHeight);
+                    gradient.addColorStop(0, 'rgba(255,64,129,0.95)');
+                    gradient.addColorStop(1, 'rgba(10,10,10,0.9)');
+
+                    ctx.save();
+                    ctx.fillStyle = gradient;
+                    ctx.strokeStyle = '#ff4081';
+                    ctx.lineWidth = 1.6;
+                    ctx.shadowColor = '#ff4081';
+                    ctx.shadowBlur = 8;
+                    ctx.roundRect(x - boxWidth/2, y - boxHeight/2, boxWidth, boxHeight, radius);
+                    ctx.fill();
+                    ctx.stroke();
+                    ctx.shadowBlur = 0;
+
+                    ctx.font = `bold ${fontSize}rem Inter`;
+                    ctx.fillStyle = '#fff';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(`${lastVal > 0 ? '+' : ''}${Math.abs(lastVal).toFixed(0)}%`, x, y);
+
+                    ctx.restore();
+                }
+            }]
+        });
+
+        // --- تابع clamp ---
+        function clamp(min, val, max) {
+            return Math.min(Math.max(val, min), max);
+        }
+
+        // --- تابع roundRect ---
+        CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
+            if (w < 2 * r) r = w / 2;
+            if (h < 2 * r) r = h / 2;
+            this.beginPath();
+            this.moveTo(x + r, y);
+            this.arcTo(x + w, y, x + w, y + h, r);
+            this.arcTo(x + w, y + h, x, y + h, r);
+            this.arcTo(x, y + h, x, y, r);
+            this.arcTo(x, y, x + w, y, r);
+            this.closePath();
+            return this;
+        };
+    </script>
+</body>
+</html>
