@@ -25,7 +25,7 @@ The dashboard shows **live sentiment analysis** (positive, negative, neutral) of
 ## Features
 
 - Write notes (create-only)  
-- Persian sentiment analysis (positive, negative, neutral)  
+- English sentiment analysis (positive, negative, neutral)  
 - Live analytics dashboard with charts  
 - Secure login with **Google**  
 - Permanent, tamper-proof storage  
